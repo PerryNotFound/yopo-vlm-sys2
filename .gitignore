@@ -12,3 +12,7 @@ data/semantic_ds/
 *.bag
 *.mcap
 rosbag2_*/
+
+# 标定工具输出
+frame.png
+hsv_clusters.png
