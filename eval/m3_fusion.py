@@ -11,10 +11,13 @@
 - M3：危险只表现为代价梯度（平滑、永不停车；但危险轨迹权重可能降得不够，
   代价接近时仍可能选进水的轨迹）
 
-惩罚计算：沿每条候选轨迹采样多点，取
-    penalty_i = SEMANTIC_COST_MAX * max_p [ zone_score(zone(p)) * (1 - dist(p)/DANGER_RANGE_M) ]
+惩罚计算：沿每条候选轨迹采样多点，跳过近端公共段（NEAR_SKIP_M 以内，
+5 条候选在此段重合，采样会抹平方向差异），对其余点取
+    penalty_i = SEMANTIC_COST_MAX * (max_p s(p) + mean_p s(p)) / 2
+    s(p) = zone_score(zone(p)) * (1 - dist(p)/DANGER_RANGE_M)
 其中 zone_score 为该区域的危险像素占比（0~1，颜色分割给出），
-距离因子让近处危险权重更大。vlm_zone 模式下 zone_score 退化为 0/1。
+距离因子让近处危险权重更大；max 保证严重危险不被平均稀释，
+mean 让"涉水长度"体现为代价梯度。vlm_zone 模式下 zone_score 退化为 0/1。
 
 话题：
   订阅 /camera/color/image/compressed, /odom, /visualize/path_{0..4},
@@ -80,6 +83,8 @@ CANDIDATE_NUM = 5
 PATH_SAMPLE_POINTS = 6
 # 只评价该距离（米）以内的轨迹点
 DANGER_RANGE_M = 10.0
+# 近端公共段：5 条候选在此距离（米）以内基本重合，采样只会抹平方向差异
+NEAR_SKIP_M = 1.5
 
 # ==================== 融合权重 ====================
 
@@ -321,14 +326,16 @@ class VLMFusionNode(Node):
         return (img_w / 2.0) / math.tan(math.radians(CAMERA_HFOV_DEG) / 2.0)
 
     def _path_penalty(self, path: Path, robot_pose, img_w, zone_scores):
-        """单条候选的语义代价：采样点区域分数 × 距离衰减，取最大"""
+        """单条候选的语义代价：跳过近端公共段，采样点分数取 max 与 mean 的均值"""
         n = len(path.poses)
         if n == 0:
             return 0.0
         rx, ry, yaw = robot_pose
         fx = self._img_fx(img_w)
         cx = img_w / 2.0
+        total = 0.0
         worst = 0.0
+        cnt = 0
         for i in np.linspace(0, n - 1, min(PATH_SAMPLE_POINTS, n)).astype(int):
             p = path.poses[i].pose.position
             dx, dy = p.x - rx, p.y - ry
@@ -337,6 +344,8 @@ class VLMFusionNode(Node):
             if local_x <= 0.1:  # 身后或正侧方
                 continue
             dist = math.hypot(local_x, local_y)
+            if dist < NEAR_SKIP_M:  # 近端公共段：各候选在此重合，不计
+                continue
             if dist > DANGER_RANGE_M:
                 continue
             bearing = math.atan2(local_y, local_x)  # >0 为左
@@ -345,8 +354,13 @@ class VLMFusionNode(Node):
                 continue
             zone = ZONES[min(int(u / (img_w / ZONE_COUNT)), ZONE_COUNT - 1)]
             score = zone_scores.get(zone, 0.0)
-            worst = max(worst, score * (1.0 - dist / DANGER_RANGE_M))
-        return SEMANTIC_COST_MAX * worst
+            s = score * (1.0 - dist / DANGER_RANGE_M)
+            total += s
+            worst = max(worst, s)
+            cnt += 1
+        if cnt == 0:
+            return 0.0
+        return SEMANTIC_COST_MAX * (worst + total / cnt) / 2.0
 
     # ---------- 主更新（10Hz） ----------
 
