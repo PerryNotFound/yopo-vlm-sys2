@@ -30,7 +30,7 @@ YOPO-Rally 的 **System-2 语义安全层**：YOPO（System-1）基于深度图�
 | **M0** | Baseline | 纯 YOPO + MPC，无语义感知 | 只跑 `diablo_algorithm.launch.py` | ✅ |
 | **M1** | Frame-level Veto | VLM 帧级二值判断，危险即截停 `/cmd_vel` | `eval/m1_safety.py` + `eval/m1_arbitrator.py` | ✅ |
 | **M2** | Candidate Semantic Veto | 危险区域 → 否决穿过该区域的候选轨迹（硬否决） | `eval/m2_veto.py` | ✅ |
-| **M3** | Positive Fusion | 语义安全分数融入代价函数（软融合对照） | 待写 | ⬜ |
+| **M3** | Positive Fusion | 语义安全分数融入代价函数（软融合对照） | `eval/m3_fusion.py` | ✅ |
 | **M4** | Veto + Recovery | 全否决时的回退策略（扇区引导 / 后退 / 重规划） | `eval/m2_veto.py` 的 RECOVERY 雏形 → 待独立 | 🔶 |
 
 M2 感知消融（`m2_veto.py` 顶部 `MODE` 切换）：
@@ -49,6 +49,7 @@ yopo-vlm-sys2/
 │   ├── m1_safety.py        # M1: VLM 帧级安全判断
 │   ├── m1_arbitrator.py    # M1: cmd_vel 仲裁（转发/截停）
 │   ├── m2_veto.py          # M2+M4雏形: 候选轨迹语义否决 + 恢复状态机
+│   ├── m3_fusion.py        # M3: 语义代价正向融合（软对照）
 │   ├── eval_offline.py     # 离线准确率评测（基座 vs LoRA）
 │   └── eval_debug.py       # 抽样打印 VLM 原始输出（调 prompt 用）
 ├── data/               # 语义数据集构建（900 帧，地面/水面/沙地/泥地 4 类）
