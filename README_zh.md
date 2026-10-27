@@ -31,7 +31,7 @@ YOPO-Rally 的 **System-2 语义安全层**：YOPO（System-1）基于深度图�
 | **M1** | Frame-level Veto | VLM 帧级二值判断，危险即截停 `/cmd_vel` | `eval/m1_safety.py` + `eval/m1_arbitrator.py` | ✅ |
 | **M2** | Candidate Semantic Veto | 危险区域 → 否决穿过该区域的候选轨迹（硬否决） | `eval/m2_veto.py` | ✅ |
 | **M3** | Positive Fusion | 语义安全分数融入代价函数（软融合对照） | `eval/m3_fusion.py` | ✅ |
-| **M4** | Veto + Recovery | 全否决时的回退策略（扇区引导 / 后退 / 重规划） | `eval/m2_veto.py` 的 RECOVERY 雏形 → 待独立 | 🔶 |
+| **M4** | Veto + Recovery | M2 否决 + 全否决时电机级主动回退（后退→转向最安全侧→交还控制） | `eval/m4_recovery.py` | ✅ |
 
 M2 感知消融（`m2_veto.py` 顶部 `MODE` 切换）：
 
@@ -48,8 +48,9 @@ yopo-vlm-sys2/
 ├── eval/               # 闭环实验节点（M0–M4）与离线评测
 │   ├── m1_safety.py        # M1: VLM 帧级安全判断
 │   ├── m1_arbitrator.py    # M1: cmd_vel 仲裁（转发/截停）
-│   ├── m2_veto.py          # M2+M4雏形: 候选轨迹语义否决 + 恢复状态机
+│   ├── m2_veto.py          # M2: 候选轨迹语义否决（含 /vlm_goal 恢复雏形）
 │   ├── m3_fusion.py        # M3: 语义代价正向融合（软对照）
+│   ├── m4_recovery.py      # M4: M2 否决 + 全否决时电机级主动回退
 │   ├── eval_offline.py     # 离线准确率评测（基座 vs LoRA）
 │   └── eval_debug.py       # 抽样打印 VLM 原始输出（调 prompt 用）
 ├── data/               # 语义数据集构建（900 帧，地面/水面/沙地/泥地 4 类）

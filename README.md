@@ -35,7 +35,7 @@ failure (a failed VLM inference silently skips that round).
 | **M1** | Frame-level Veto | Per-frame binary VLM veto; `/cmd_vel` cut off when unsafe | `eval/m1_safety.py` + `eval/m1_arbitrator.py` | ✅ |
 | **M2** | Candidate Semantic Veto | Veto candidate trajectories crossing dangerous zones | `eval/m2_veto.py` | ✅ |
 | **M3** | Positive Fusion | Semantic safety score fused into the cost function (soft counterpart of M2) | `eval/m3_fusion.py` | ✅ |
-| **M4** | Veto + Recovery | Fallback when all candidates are vetoed (fan redirection / back-up / replan) | RECOVERY seed in `eval/m2_veto.py` | 🔶 |
+| **M4** | Veto + Recovery | M2 veto + motor-level active recovery on full veto (back-up → turn toward safest side → hand control back) | `eval/m4_recovery.py` | ✅ |
 
 Perception ablation within M2 (`MODE` switch at the top of `m2_veto.py`):
 
