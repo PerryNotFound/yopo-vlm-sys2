@@ -90,6 +90,8 @@ SEMANTIC_COST_MAX = 50.0
 
 GROUND_ROW_FRAC = 0.45   # 只看地平线以下的地面区域
 MIN_HAZARD_PIXELS = 300  # 区域内危险像素绝对数量下限（抗噪点）
+# 连通域面积下限：水面是大片连通域，天空/雾气碎斑是小连通域
+MIN_BLOB_PIXELS = 1500
 
 DETECT_WATER = True
 DETECT_SAND = True
@@ -97,9 +99,10 @@ DETECT_MUD = False  # 深棕色与树影高度混淆，默认关
 
 # OpenCV HSV：H∈[0,179], S,V∈[0,255]
 # WaterDepthBased 真实水面材质标定（2026-10，sample_hsv.py --nogui 聚类）：
-# 主体灰蓝（H95-120,S19-48）+ 天空反光（H85-96,S8-40,V198+）+ 蓝色反射（H105-110,S55-95）
-# S 下限 8 用于排除纯白/纯灰物体（机器人自身、石头）
-HSV_WATER = ((80, 8, 85), (125, 255, 255))
+# 主体灰蓝（H95-120,S19-48,V101-114）+ 蓝色反射（H105-110,S55-95,V130-168）
+# V 上限 195 砍掉天空/雾气（V198+ 的天空反光与真实天空歧义，放弃）；
+# S 下限 12 排除纯白/纯灰物体（机器人自身、石头）
+HSV_WATER = ((88, 12, 90), (125, 255, 195))
 HSV_SAND = ((15, 60, 120), (40, 255, 255))
 HSV_MUD = ((5, 60, 20), (20, 255, 120))
 
@@ -225,6 +228,12 @@ class VLMFusionNode(Node):
         if DETECT_MUD:
             mask |= cv2.inRange(hsv, np.array(HSV_MUD[0]), np.array(HSV_MUD[1]))
         mask[: int(h * GROUND_ROW_FRAC), :] = 0  # 只看地面
+        # 形态学净化：开运算去碎斑，再按连通域面积过滤（水面是大片连通域）
+        mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, np.ones((5, 5), np.uint8))
+        n, lab, stats, _ = cv2.connectedComponentsWithStats(mask)
+        for i in range(1, n):
+            if stats[i, cv2.CC_STAT_AREA] < MIN_BLOB_PIXELS:
+                mask[lab == i] = 0
 
         scores = {}
         zw = w / ZONE_COUNT
