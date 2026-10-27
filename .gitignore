@@ -1,0 +1,14 @@
+# Byte-compiled / cache
+__pycache__/
+*.pyc
+
+# 大文件：训练产物与数据集不入库（开源时走 Release / 网盘）
+finetune/checkpoints/
+data/semantic_ds/
+*.pth
+*.safetensors
+
+# 评测输出
+*.bag
+*.mcap
+rosbag2_*/
