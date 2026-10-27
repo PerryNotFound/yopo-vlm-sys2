@@ -54,7 +54,7 @@ yopo-vlm-sys2/
 │   └── eval_debug.py       # 抽样打印 VLM 原始输出（调 prompt 用）
 ├── data/               # 语义数据集构建（900 帧，地面/水面/沙地/泥地 4 类）
 ├── finetune/           # QLoRA 微调（Qwen3-VL-4B，train/val JSONL + 训练脚本）
-├── deploy/             # 部署工具（test_semantic.py 单图冒烟测试）
+├── deploy/             # 部署工具（test_semantic.py 单图冒烟、sample_hsv.py HSV 标定）
 ├── archive/            # 开发历程中的探索原型（附各自失效原因，见 archive/README.md）
 └── docs/               # 工作手册与改动说明
 ```

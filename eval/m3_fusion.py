@@ -370,9 +370,10 @@ class VLMFusionNode(Node):
             return
 
         if any(p > 0 for p in penalties):
+            nonzero = {z: round(s, 2) for z, s in scores.items() if s > 0}
             self.get_logger().info(
                 f"mode={MODE} penalties={[round(p, 1) for p in penalties]} "
-                f"zone_scores={{z: round(s, 2) for z, s in scores.items() if s > 0}}"
+                f"zone_scores={nonzero}"
             )
 
     def destroy_node(self):
