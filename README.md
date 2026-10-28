@@ -31,7 +31,7 @@ failure (a failed VLM inference silently skips that round).
 
 | # | Name | Method | Code | Status |
 |---|---|---|---|---|
-| **M0** | Baseline | Pure YOPO + MPC, no semantic awareness | `diablo_algorithm.launch.py` only | ✅ |
+| **M0** | Baseline | Pure YOPO + MPC, no semantic awareness | `diablo_algorithm.launch.py` + `eval/m0_passthrough.py` | ✅ |
 | **M1** | Frame-level Veto | Per-frame binary VLM veto; `/cmd_vel` cut off when unsafe | `eval/m1_safety.py` + `eval/m1_arbitrator.py` | ✅ |
 | **M2** | Candidate Semantic Veto | Veto candidate trajectories crossing dangerous zones | `eval/m2_veto.py` | ✅ |
 | **M3** | Positive Fusion | Semantic safety score fused into the cost function (soft counterpart of M2) | `eval/m3_fusion.py` | ✅ |

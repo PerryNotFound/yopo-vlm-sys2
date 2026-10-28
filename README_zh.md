@@ -27,7 +27,7 @@ YOPO-Rally 的 **System-2 语义安全层**：YOPO（System-1）基于深度图�
 
 | 实验 | 名称 | 方法 | 代码 | 状态 |
 |---|---|---|---|---|
-| **M0** | Baseline | 纯 YOPO + MPC，无语义感知 | 只跑 `diablo_algorithm.launch.py` | ✅ |
+| **M0** | Baseline | 纯 YOPO + MPC，无语义感知 | `diablo_algorithm.launch.py` + `eval/m0_passthrough.py` | ✅ |
 | **M1** | Frame-level Veto | VLM 帧级二值判断，危险即截停 `/cmd_vel` | `eval/m1_safety.py` + `eval/m1_arbitrator.py` | ✅ |
 | **M2** | Candidate Semantic Veto | 危险区域 → 否决穿过该区域的候选轨迹（硬否决） | `eval/m2_veto.py` | ✅ |
 | **M3** | Positive Fusion | 语义安全分数融入代价函数（软融合对照） | `eval/m3_fusion.py` | ✅ |
