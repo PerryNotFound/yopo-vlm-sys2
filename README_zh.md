@@ -32,6 +32,7 @@ YOPO-Rally 的 **System-2 语义安全层**：YOPO（System-1）基于深度图�
 | **M2** | Candidate Semantic Veto | 危险区域 → 否决穿过该区域的候选轨迹（硬否决） | `eval/m2_veto.py` | ✅ |
 | **M3** | Positive Fusion | 语义安全分数融入代价函数（软融合对照） | `eval/m3_fusion.py` | ✅ |
 | **M4** | Veto + Recovery | M2 否决 + 全否决时电机级主动回退（后退→转向最安全侧→交还控制） | `eval/m4_recovery.py` | ✅ |
+| **M5** | VLM Semantic Avoid | 纯 VLM 多类别语义感知（water/mud/sand/tree 分区）→ 否决 + 恢复；无颜色分割，接口与 M2 兼容（方法细节见 `docs/M5-纯VLM语义避障方法说明.md`） | `eval/vlm_semantic_avoid.py` | ✅ |
 
 M2 感知消融（`m2_veto.py` 顶部 `MODE` 切换）：
 
@@ -51,6 +52,7 @@ yopo-vlm-sys2/
 │   ├── m2_veto.py          # M2: 候选轨迹语义否决（含 /vlm_goal 恢复雏形）
 │   ├── m3_fusion.py        # M3: 语义代价正向融合（软对照）
 │   ├── m4_recovery.py      # M4: M2 否决 + 全否决时电机级主动回退
+│   ├── vlm_semantic_avoid.py # M5: 纯 VLM 多类别语义否决（无颜色分割，替代 M2 的主力节点）
 │   ├── eval_offline.py     # 离线准确率评测（基座 vs LoRA）
 │   └── eval_debug.py       # 抽样打印 VLM 原始输出（调 prompt 用）
 ├── data/               # 语义数据集构建（900 帧，地面/水面/沙地/泥地 4 类）
@@ -78,7 +80,7 @@ ros2 launch diablo_ros_wrapper diablo_algorithm.launch.py
 # 4. 终端C：VLM 节点（M1 / M2 按需）
 conda activate base
 source ~/YOPO-Rally-Whole/YOPO-Rally/.venv/bin/activate
-python eval/m2_veto.py        # M2；M1 则跑 m1_safety.py + m1_arbitrator.py
+python eval/vlm_semantic_avoid.py   # M5（推荐）：纯 VLM 多类别语义否决；跑 M2/M4 消融则用对应脚本
 
 # 5. RViz 选目标点（2D Goal Pose）
 ```

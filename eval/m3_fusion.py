@@ -49,7 +49,7 @@ MODEL_ID = "/home/admin0/YOPO-Rally-Whole/models/Qwen3-VL-4B-Instruct"
 
 # ==================== 模式与区域 ====================
 
-MODE = "hybrid"  # "vlm_zone" | "hybrid" | "color"，与 M2 消融对齐
+MODE = "vlm_zone"  # "vlm_zone" | "hybrid" | "color"，与 M2 消融对齐
 
 ZONES = ("far_left", "left", "center", "right", "far_right")
 ZONE_COUNT = len(ZONES)
