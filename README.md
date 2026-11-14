@@ -88,8 +88,8 @@ This module is one of three repos that together form the full closed-loop system
 | Repo | Role |
 |---|---|
 | **yopo-vlm-sys2** (this repo) | VLM semantic safety layer (System-2) |
-| [YOPO-Rally](https://github.com/TJU-Aerial-Robotics/YOPO-Rally) fork | Planner + MPC with the `/vlm_veto` / `/vlm_penalty` / `/vlm_goal` interfaces |
-| [YOPO-Sim](https://github.com/TJU-Aerial-Robotics/YOPO-Sim) fork | Unity simulator with puddle randomization and VLM-visible water |
+| [YOPO-Rally-vlm](https://github.com/PerryNotFound/YOPO-Rally-vlm) | Planner + MPC fork with the `/vlm_veto` / `/vlm_penalty` / `/vlm_goal` interfaces |
+| [YOPO-Sim-Project-vlm](https://github.com/PerryNotFound/YOPO-Sim-Project-vlm) | Unity simulator fork with puddle randomization and VLM-visible water |
 
 Upstream projects: [YOPO-Rally](https://github.com/TJU-Aerial-Robotics/YOPO-Rally) ·
 [YOPO-Sim](https://github.com/TJU-Aerial-Robotics/YOPO-Sim) (TJU Aerial Robotics).
