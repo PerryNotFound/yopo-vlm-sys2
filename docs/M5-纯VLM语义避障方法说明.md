@@ -192,7 +192,7 @@ RViz 里用 2D Goal Pose 选目标点即可闭环。
 | `yopo-vlm-sys2/eval/vlm_semantic_avoid.py` | 本方法全部代码（约 380 行，无外部依赖 beyond ROS/torch/transformers/cv2） |
 | `YOPO-Rally/.../diablo_ros_wrapper/yopo_node.py` | YOPO 侧 VLM 接口消费方（`/vlm_veto` 置 +inf、`/vlm_goal` 软引导、2s 超时回退），未改动 |
 | `YOPO-Sim-Project/Assets/Scripts/PuddleRandomizer.cs` | 随机水坑生成（不挖地、blob 水面、半径递减重试、Console 打印每个水坑坐标） |
-| `YOPO-Sim-Project/Assets/Materials/VLMWater.mat` | **当前水材质**（2026-11-12 起）：URP/Lit 不透明亮蓝 `(0.10,0.40,0.88)`。透明深度材质在车相机里近黑被认成 mud，已弃用（WaterDepthBased.mat 保留可回切，见 YOPO-Sim使用指南 2.3.1） |
+| `YOPO-Sim-Project/Assets/Materials/VLMWater.mat` | **当前水材质**（2026-11-12 起）：URP/Lit 不透明亮蓝 `(0.10,0.40,0.88)`。透明深度材质在车相机里近黑被认成 mud，已弃用（WaterDepthBased.mat 保留可回切，见 YOPO-Sim-Project/docs/YOPO-Sim使用指南.md 2.3.1 节） |
 | `YOPO-Sim-Project/Assets/Samples/UnitySensorsROS/3.0.0/Sample/Prefabs/Camera/RGBCamera_ros.prefab` | RGB 相机 `_fov` 30°→70°（2026-11-12），VLM 视野预瞄水面命中率大幅提升 |
 | `YOPO-Sim-Project/Assets/Editor/AutoPlay.cs` | 命令行 `-autoPlay` 启动：强制 Standalone 构建目标（WebGL 下 ROS-TCP 不通）+ 自动进 Play，全链路可脚本化 |
 | `yopo-vlm-sys2/eval/m2_veto.py` 等 | M1–M4 消融对照，保留不动 |
